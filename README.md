@@ -11,7 +11,7 @@
 git clone https://github.com/petrick-ribeiro/vagrant-lab.git ~/vagrant-lab
 ```
 
-### To use the same pair key to acess the nodes:
+### To use the same pair key to acess the nodes
 ```
 cd ~/vagrant-lab && mkdir keys/ && \
 ssh-keygen -q -t rsa -f ./keys/vagrant-key -N ''
