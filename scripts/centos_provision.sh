@@ -1,6 +1,6 @@
 ### Provising CentOS/7 ###
 
-KEY_PATH='/vagrant/files'
+KEY_PATH='/vagrant/keys'
 COMMON_PKGS='wget curl tree htop vim git ansible'
 DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
 DOCKER_REPO='https://download.docker.com/linux/centos/docker-ce.repo'
@@ -8,12 +8,12 @@ COMPOSE_FILE_PATH='/usr/local/bin/docker-compose'
 COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)"
 
 ### Set ssh key ###
-# mkdir -p /root/.ssh
-# cp $KEY_PATH/key /root/.ssh/id_rsa
-# cp $KEY_PATH/key.pub /root/.ssh/id_rsa.pub
-# cp $KEY_PATH/key.pub /root/.ssh/authorized_keys
-# chmod 400 /root/.ssh/id_rsa*
-# cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+mkdir -p /root/.ssh
+cp $KEY_PATH/vagrant-key /root/.ssh/id_rsa
+cp $KEY_PATH/vagrant-key.pub /root/.ssh/id_rsa.pub
+cp $KEY_PATH/vagrant-key.pub /root/.ssh/authorized_keys
+chmod 400 /root/.ssh/id_rsa*
+cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 
 ### Install Packages ###
 yum update -y
