@@ -12,9 +12,9 @@ COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/doc
 
 ### Set ssh key ###
 mkdir -p /root/.ssh
-cp $KEY_PATH/key /root/.ssh/id_rsa
-cp $KEY_PATH/key.pub /root/.ssh/id_rsa.pub
-cp $KEY_PATH/key.pub /root/.ssh/authorized_keys
+cp $KEY_PATH/vagrant-key /root/.ssh/id_rsa
+cp $KEY_PATH/vagrant-key.pub /root/.ssh/id_rsa.pub
+cp $KEY_PATH/vagrant-key.pub /root/.ssh/authorized_keys
 chmod 400 /root/.ssh/id_rsa*
 cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 
