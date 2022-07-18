@@ -1,7 +1,7 @@
 ### Provising Ubuntu/Bionic64 ###
 
-KEY_PATH='/vagrant/vagrant-keys'
-COMMON_PKGS='wget curl ca-certificates gnupg lsb-release htop vim git ansible'
+KEY_PATH='/vagrant/keys'
+COMMON_PKGS='wget curl ca-certificates gnupg lsb-release htop vim git'
 DOCKER_KEY='https://download.docker.com/linux/ubuntu/gpg'
 DOCKER_KEY_PATH='/etc/apt/keyrings/docker.gpg'
 DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
@@ -22,12 +22,12 @@ cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 mkdir -p /etc/apt/keyrings
 curl -fsSL $DOCKER_KEY | gpg --dearmor -o $DOCKER_KEY_PATH
 echo $DOCKER_REPO_COMMAND | tee $DOCKER_REPO_PATH > /dev/null
-DEBIAN_FRONTEND=noninteractive apt-get update
-apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get install $COMMON_PKGS $DOCKER_PKGS -y
+DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null
+# apt-get upgrade -y
+DEBIAN_FRONTEND=noninteractive apt-get install $COMMON_PKGS $DOCKER_PKGS > /dev/null
 
 # Convenience Script Docker (dev)
-#curl -fsSL https://get.docker.com | bash
+# curl -fsSL https://get.docker.com | bash
 
 curl -L $COMPOSE_URL_PATH -o $COMPOSE_FILE_PATH
 
