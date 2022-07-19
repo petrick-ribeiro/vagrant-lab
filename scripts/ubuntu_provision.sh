@@ -24,7 +24,7 @@ curl -fsSL $DOCKER_KEY | gpg --dearmor -o $DOCKER_KEY_PATH
 echo $DOCKER_REPO_COMMAND | tee $DOCKER_REPO_PATH > /dev/null
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null
 # apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get install $COMMON_PKGS $DOCKER_PKGS > /dev/null
+DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y $COMMON_PKGS $DOCKER_PKGS > /dev/null
 
 # Convenience Script Docker (dev)
 # curl -fsSL https://get.docker.com | bash
