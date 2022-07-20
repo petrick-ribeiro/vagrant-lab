@@ -1,11 +1,13 @@
 ### Provising CentOS/7 ###
 
 KEY_PATH='/vagrant/keys'
-COMMON_PKGS='wget curl tree htop vim git'
+COMMON_PKGS='wget curl tree unzip htop vim git'
 DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
 DOCKER_REPO='https://download.docker.com/linux/centos/docker-ce.repo'
 COMPOSE_FILE_PATH='/usr/local/bin/docker-compose'
 COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)"
+TERRAFORM_ZIP_PATH='/tmp/terraform.zip'
+TERRAFORM_URL='https://releases.hashicorp.com/terraform/1.2.5/terraform_1.2.5_linux_amd64.zip'
 
 ### Set ssh key ###
 mkdir -p /root/.ssh
@@ -26,9 +28,12 @@ yum install $COMMON_PKGS $DOCKER_PKGS -y > /dev/null
 
 curl -L $COMPOSE_URL_PATH -o $COMPOSE_FILE_PATH
 
+# Terraform Installation
+wget -qO $TERRAFORM_ZIP_PATH $TERRAFORM_URL
+unzip $TERRAFORM_ZIP_PATH -d /usr/local/bin/
+rm $TERRAFORM_ZIP_PATH
+
 ### Post-install ###
 systemctl start docker
 systemctl enable docker
 chmod 755 $COMPOSE_FILE_PATH
-groupadd docker
-usermod -aG docker $USER

@@ -3,7 +3,7 @@
 
 machines = {
   # 'master' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '100', 'image' => 'ubuntu/bionic64' },
-  'node01' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '110', 'image' => 'ubuntu/bionic64' },
+  'node01' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '110', 'image' => 'ubuntu/focal64' },
   'node02' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '120', 'image' => 'centos/7' }
 }
 
@@ -20,7 +20,7 @@ Vagrant.configure('2') do |config|
         vb.cpus = conf['cpu']
         vb.customize ['modifyvm', :id, '--groups', '/LAB']
       end
-      if "#{conf['image']}" == 'ubuntu/bionic64'
+      if "#{conf['image']}" == 'ubuntu/focal64'
         machine.vm.provision 'shell', path: 'scripts/ubuntu_provision.sh'
       else
         machine.vm.provision 'shell', path: 'scripts/centos_provision.sh'

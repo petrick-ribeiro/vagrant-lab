@@ -1,7 +1,7 @@
 ### Provising Ubuntu/Bionic64 ###
 
 KEY_PATH='/vagrant/keys'
-COMMON_PKGS='wget curl ca-certificates gnupg lsb-release htop vim git'
+COMMON_PKGS='wget curl ca-certificates gnupg lsb-release unzip htop vim git'
 DOCKER_KEY='https://download.docker.com/linux/ubuntu/gpg'
 DOCKER_KEY_PATH='/etc/apt/keyrings/docker.gpg'
 DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
@@ -9,6 +9,8 @@ DOCKER_REPO_COMMAND="deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/k
 DOCKER_REPO_PATH='/etc/apt/sources.list.d/docker.list'
 COMPOSE_FILE_PATH='/usr/local/bin/docker-compose'
 COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)"
+TERRAFORM_ZIP_PATH='/tmp/terraform.zip'
+TERRAFORM_URL='https://releases.hashicorp.com/terraform/1.2.5/terraform_1.2.5_linux_amd64.zip'
 
 ### Set ssh key ###
 mkdir -p /root/.ssh
@@ -25,15 +27,20 @@ echo $DOCKER_REPO_COMMAND | tee $DOCKER_REPO_PATH > /dev/null
 DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null
 # apt-get upgrade -y
 DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y $COMMON_PKGS $DOCKER_PKGS > /dev/null
+rm -rf /var/apt/lists
+rm -rf /var/lib/cache/apt
 
 # Convenience Script Docker (dev)
 # curl -fsSL https://get.docker.com | bash
 
 curl -L $COMPOSE_URL_PATH -o $COMPOSE_FILE_PATH
 
+# Terraform Installation
+wget -qO $TERRAFORM_ZIP_PATH $TERRAFORM_URL
+unzip $TERRAFORM_ZIP_PATH -d /usr/local/bin/
+rm $TERRAFORM_ZIP_PATH
+
 ### Post-install ###
 systemctl start docker
 systemctl enable docker
 chmod 755 $COMPOSE_FILE_PATH
-groupadd docker
-usermod -aG docker $USER
