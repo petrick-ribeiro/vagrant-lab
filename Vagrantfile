@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 machines = {
-  'master' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '100', 'image' => 'ubuntu/bionic64' },
+  'master' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '100', 'image' => 'ubuntu/focal64' },
   'node01' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '110', 'image' => 'centos/7' },
   'node02' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '120', 'image' => 'centos/7' },
   'node03' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '130', 'image' => 'centos/7' }
