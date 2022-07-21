@@ -17,6 +17,14 @@ cp $KEY_PATH/vagrant-key.pub /root/.ssh/authorized_keys
 chmod 400 /root/.ssh/id_rsa*
 cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 
+### Networking ###
+HOSTS=$(head -n7 /etc/hosts)
+echo -e "$HOSTS" > /etc/hosts
+echo '10.0.10.100 master.lab' >> /etc/hosts
+echo '10.0.10.110 node01.lab' >> /etc/hosts
+echo '10.0.10.120 node02.lab' >> /etc/hosts
+echo '10.0.10.130 node03.lab' >> /etc/hosts
+
 ### Install Packages ###
 # yum update -y > /dev/null
 yum install epel-release yum-utils -y > /dev/null
