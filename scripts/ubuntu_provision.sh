@@ -23,6 +23,7 @@ cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 ### Networking ###
 HOSTS=$(head -n7 /etc/hosts)
 echo -e "$HOSTS" > /etc/hosts
+
 echo '10.0.10.100 master.lab' >> /etc/hosts
 echo '10.0.10.110 node01.lab' >> /etc/hosts
 echo '10.0.10.120 node02.lab' >> /etc/hosts
