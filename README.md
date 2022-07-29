@@ -3,30 +3,34 @@
 ## A multi-machine environment for study ✏️.
 
 ## Prereqs:
-- VM VirtualBox 
-- Vagrant
+- [VM VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+- [Vagrant](https://www.vagrantup.com/downloads)
 
-## Get started:
-```
+## Getting started:
+### Clone the repo to /home:
+``` shell
 git clone https://github.com/petrick-ribeiro/vagrant-lab.git ~/vagrant-lab
 ```
 
-### To use the same pair key to acess the nodes
-```
+### Generate the keys:
+``` shell
 cd ~/vagrant-lab && mkdir keys/ && \
 ssh-keygen -q -t rsa -f ./keys/vagrant-key -N ''
 ```
+> To use the same pair key to acess the nodes.
 
 ### Bring up the environment :rocket:
-```
+``` shell
 vagrant up
 ```
 ### Destroy the environment 💣
-```
+``` shell
 vagrant destroy
 ```
-### Boot/ Destroy an specific machine
-```
+---
+
+### Boot / Destroy an specific machine:
+``` shell
 vagrant up <machine name>
 
 vagrant destroy -f <machine name>
