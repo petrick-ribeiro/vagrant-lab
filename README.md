@@ -14,7 +14,8 @@ git clone https://github.com/petrick-ribeiro/vagrant-lab.git ~/vagrant-lab
 
 ### Generate the keys:
 ``` shell
-cd ~/vagrant-lab && mkdir keys/ && \
+cd ~/vagrant-lab &&\
+mkdir keys &&\
 ssh-keygen -q -t rsa -f ./keys/vagrant-key -N ''
 ```
 > To use the same pair key to acess the nodes.
