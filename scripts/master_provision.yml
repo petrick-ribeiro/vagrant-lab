@@ -1,0 +1,80 @@
+---
+- name: Provisioning Master
+  hosts: master
+  gather_facts: true
+  vars:
+    bin_path: '/usr/local/bin'
+
+    terraform_src:
+      'https://releases.hashicorp.com/terraform/1.2.6/terraform_1.2.6_linux_amd64.zip'
+    vagrant_src:
+      'https://releases.hashicorp.com/vagrant/2.2.19/vagrant_2.2.19_linux_amd64.zip'
+    vault_src:
+      'https://releases.hashicorp.com/vault/1.11.1/vault_1.11.1_linux_amd64.zip'
+
+    docker_key:
+      'https://download.docker.com/linux/debian/gpg'
+    docker_repo:
+      'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
+    docker_compose_src:
+      'https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64'
+
+  tasks:
+    - name: Installing Terraform 1.2.6
+      become: true
+      unarchive:
+        src: '{{ terraform_src }}'
+        dest: '{{ bin_path }}'
+        remote_src: yes
+
+    - name: Installing Vagrant 2.2.19
+      become: true
+      unarchive:
+        src: '{{ vagrant_src }}'
+        dest: '{{ bin_path }}'
+        remote_src: yes
+
+    - name: Installing Vault 1.11.1
+      become: true
+      unarchive:
+        src: '{{ vault_src }}'
+        dest: '{{ bin_path }}'
+        remote_src: yes
+
+    - name: Setting Docker and Docker Compose
+      become: true
+      block:
+        - name: Installing Docker Key
+          apt_key:
+            url: '{{ docker_key }}'
+            state: present
+
+        - name: Installing Docker Repo
+          apt_repository:
+            repo: '{{ docker_repo }}'
+            state: present
+            filename: docker-ce
+
+        - name: Installing Docker Engine Stable
+          apt:
+            name: docker-ce
+            state: present
+            update_cache: yes
+
+        - name: Adding existing user to group Docker
+          user:
+            name: '{{ ansible_user_id }}'
+            groups: docker
+            append: yes
+
+        - name: Installing Docker Compose 2.7.0
+          get_url:
+            url: '{{ docker_compose_src }}'
+            dest: '/usr/local/bin/docker-compose'
+            mode: 755
+
+    - name: Installing AWS CLI using pip3
+      become: true
+      pip:
+        name: awscli
+        executable: pip3

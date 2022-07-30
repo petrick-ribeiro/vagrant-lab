@@ -1,7 +1,7 @@
 ### Provising Ubuntu/Bionic64 ###
 
 KEY_PATH='/vagrant/keys'
-COMMON_PKGS='wget curl ca-certificates gnupg lsb-release unzip htop vim git'
+COMMON_PKGS='wget curl ca-certificates gnupg lsb-release python3-pip unzip htop vim git'
 # DOCKER_KEY='https://download.docker.com/linux/ubuntu/gpg'
 # DOCKER_KEY_PATH='/etc/apt/keyrings/docker.gpg'
 # DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
