@@ -36,3 +36,7 @@ vagrant up <machine name>
 
 vagrant destroy -f <machine name>
 ``` 
+> Environment:
+> - **manager** (Primary Node - Ubuntu)
+> - **worker01** (Secondary Node - Ubuntu)
+> - **worker02** (Secondary Node - CentOS/7)

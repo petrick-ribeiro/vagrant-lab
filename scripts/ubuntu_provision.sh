@@ -1,4 +1,4 @@
-### Provising Ubuntu/Bionic64 ###
+### Provising Ubuntu/Focal64 ###
 
 KEY_PATH='/vagrant/keys'
 COMMON_PKGS='wget curl ca-certificates gnupg lsb-release python3-pip unzip htop vim git'
@@ -24,10 +24,9 @@ cat /root/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
 HOSTS=$(head -n7 /etc/hosts)
 echo -e "$HOSTS" > /etc/hosts
 
-echo '10.0.10.100 master.lab' >> /etc/hosts
+echo '10.0.10.100 manager.lab' >> /etc/hosts
 echo '10.0.10.110 node01.lab' >> /etc/hosts
 echo '10.0.10.120 node02.lab' >> /etc/hosts
-echo '10.0.10.130 node03.lab' >> /etc/hosts
 
 ### Install Packages ###
 # mkdir -p /etc/apt/keyrings

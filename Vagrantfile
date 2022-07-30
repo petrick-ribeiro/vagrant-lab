@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 machines = {
-  'master' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '100', 'image' => 'ubuntu/focal64' },
-  'node01' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '110', 'image' => 'ubuntu/focal64' },
-  'node02' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '120', 'image' => 'centos/7' }
+  'manager' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '100', 'image' => 'ubuntu/focal64' },
+  'worker01' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '110', 'image' => 'ubuntu/focal64' },
+  'worker02' => { 'memory' => '1024', 'cpu' => '2', 'ip' => '120', 'image' => 'centos/7' }
 }
 
 Vagrant.configure('2') do |config|
@@ -27,9 +27,9 @@ Vagrant.configure('2') do |config|
         machine.vm.provision 'shell', path: 'scripts/centos_provision.sh'
       end
 
-      if "#{name}" == 'master'
+      if "#{name}" == 'manager'
         machine.vm.provision 'ansible_local' do |ansible|
-          ansible.playbook = 'scripts/master_provision.yml'
+          ansible.playbook = 'scripts/manager_provision.yml'
           ansible.install_mode = 'default'
         end
       end

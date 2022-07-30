@@ -1,6 +1,6 @@
 ---
-- name: Provisioning Master
-  hosts: master
+- name: Provisioning Manager Node
+  hosts: manager
   gather_facts: true
   vars:
     bin_path: '/usr/local/bin'
