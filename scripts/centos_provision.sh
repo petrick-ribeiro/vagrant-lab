@@ -2,12 +2,12 @@
 
 KEY_PATH='/vagrant/keys'
 COMMON_PKGS='wget curl tree unzip htop vim git'
-DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
-DOCKER_REPO='https://download.docker.com/linux/centos/docker-ce.repo'
-COMPOSE_FILE_PATH='/usr/local/bin/docker-compose'
-COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)"
-TERRAFORM_ZIP_PATH='/tmp/terraform.zip'
-TERRAFORM_URL='https://releases.hashicorp.com/terraform/1.2.5/terraform_1.2.5_linux_amd64.zip'
+# DOCKER_PKGS='docker-ce docker-ce-cli containerd.io docker-compose-plugin'
+# DOCKER_REPO='https://download.docker.com/linux/centos/docker-ce.repo'
+# COMPOSE_FILE_PATH='/usr/local/bin/docker-compose'
+# COMPOSE_URL_PATH="https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)"
+# TERRAFORM_ZIP_PATH='/tmp/terraform.zip'
+# TERRAFORM_URL='https://releases.hashicorp.com/terraform/1.2.5/terraform_1.2.5_linux_amd64.zip'
 
 ### Set ssh key ###
 mkdir -p /root/.ssh
@@ -29,20 +29,21 @@ echo '10.0.10.130 node03.lab' >> /etc/hosts
 ### Install Packages ###
 # yum update -y > /dev/null
 yum install epel-release yum-utils -y > /dev/null
-yum-config-manager --add-repo $DOCKER_REPO
-yum install $COMMON_PKGS $DOCKER_PKGS -y > /dev/null
+# yum-config-manager --add-repo $DOCKER_REPO
+yum install $COMMON_PKGS -y > /dev/null
+# yum install $DOCKER_PKGS -y > /dev/null
 
 # Convenience Script Docker (dev)
 # curl -fsSL https://get.docker.com | bash
 
-curl -L $COMPOSE_URL_PATH -o $COMPOSE_FILE_PATH
+# curl -L $COMPOSE_URL_PATH -o $COMPOSE_FILE_PATH
 
 # Terraform Installation
-wget -qO $TERRAFORM_ZIP_PATH $TERRAFORM_URL
-unzip $TERRAFORM_ZIP_PATH -d /usr/local/bin/
-rm $TERRAFORM_ZIP_PATH
+# wget -qO $TERRAFORM_ZIP_PATH $TERRAFORM_URL
+# unzip $TERRAFORM_ZIP_PATH -d /usr/local/bin/
+# rm $TERRAFORM_ZIP_PATH
 
 ### Post-install ###
-systemctl start docker
-systemctl enable docker
-chmod 755 $COMPOSE_FILE_PATH
+# systemctl start docker
+# systemctl enable docker
+# chmod 755 $COMPOSE_FILE_PATH
