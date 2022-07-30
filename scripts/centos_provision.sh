@@ -22,8 +22,8 @@ HOSTS=$(head -n7 /etc/hosts)
 echo -e "$HOSTS" > /etc/hosts
 
 echo '10.0.10.100 manager.lab' >> /etc/hosts
-echo '10.0.10.110 node01.lab' >> /etc/hosts
-echo '10.0.10.120 node02.lab' >> /etc/hosts
+echo '10.0.10.110 worker01.lab' >> /etc/hosts
+echo '10.0.10.120 worker02.lab' >> /etc/hosts
 
 ### Install Packages ###
 # yum update -y > /dev/null
