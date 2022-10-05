@@ -1,5 +1,5 @@
 ---
-- name: Provisioning Nodes
+- name: Provisioning Kubernetes Cluster
   hosts: all
   connection: local
   gather_facts: true
@@ -8,131 +8,125 @@
     bin_path: '/usr/local/bin'
     ssh_keys_path: '/vagrant/keys'
     ubuntu_pkgs:
+      - python-apt
+      - python3-apt
       - wget
       - curl
       - htop
       - vim
       - git
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
 
-    centos_pkgs:
-      - epel-release
-      - yum-utils
-      - wget
-      - curl
-      - htop
-      - vim
-      - git
-
-    docker_key:
+    containerd_key:
       'https://download.docker.com/linux/debian/gpg'
-    docker_repo:
-      'deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable'
-    docker_compose_src:
-      'https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64'
+    containerd_repo:
+      'deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable'
+    containerd_cfg:
+      'containerd config default > /etc/containerd/config.toml'
+
+    k8s_key:
+      'https://packages.cloud.google.com/apt/doc/apt-key.gpg'
+    k8s_repo:
+      'deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main'
 
   tasks:
-    - name: Provisioning Ubuntu
+    - name: Provisioning Nodes
       become: true
       block:
-        - name: Installing Common Pkgs [Ubuntu]
+        - name: Installing Common Pkgs
           apt:
             name: '{{ ubuntu_pkgs }}'
             state: latest
             update_cache: yes
 
-        - name: Installing Docker Key [Ubuntu]
-          apt_key:
-            url: '{{ docker_key }}'
-            state: present
+        - name: Setting Up Container Runtime
+          become: true
+          block:
+            - name: Adding public signing key
+              apt_key:
+                url: "{{ containerd_key }}"
 
-        - name: Installing Docker Repo [Ubuntu]
-          apt_repository:
-            repo: '{{ docker_repo }}'
-            state: present
-            filename: docker-ce
+            - name: Add containerd Repo 
+              apt_repository:
+                repo: "{{ containerd_repo }}"
+                state: present
 
-        - name: Installing Docker Engine Stable [Ubuntu]
-          apt:
-            name: docker-ce
-            state: present
-            update_cache: yes
-      when: ansible_facts['distribution']=="Ubuntu"
+            - name: Installing Containerd
+              apt:
+                name: containerd.io
+                state: present
+                update_cache: yes
 
-    - name: Provisioning CentOS
-      become: true
-      block:
-        - name: Installing Common Pkgs [CentOS]
-          yum:
-            name: '{{ centos_pkgs }}'
-            state: latest
-            update_cache: yes
+            - name: Adding containerd config
+              shell: '{{ containerd_cfg }}'
+              args:
+                creates: /etc/containerd/
 
-        - name: Adding Docker repo [CentOS]
-          shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+            - name: Restarting containerd service
+              service:
+                name: containerd
+                state: restarted
+                enabled: true
 
-        - name: Installing Docker Engine [CentOS]
-          yum:
-            name:
-              - docker-ce
-              - docker-ce-cli
-              - containerd.io
-              - docker-compose-plugin
-            state: latest
-      when: ansible_facts['distribution']=="CentOS"
+        - name: Setting Up K8s
+          become: true
+          block:
+            - name: Adding public signing key
+              apt_key:
+                url: "{{ k8s_key }}"
 
-    - name: Installing Docker Compose 2.7.0
-      become: true
-      get_url:
-        url: '{{ docker_compose_src }}'
-        dest: '/usr/local/bin/docker-compose'
-        mode: 755
+            - name: Adding K8s Repo
+              apt_repository:
+                repo: "{{ k8s_repo }}"
+                state: present
 
-    - name: Docker Post-install
-      become: true
-      block:
-        - name: Adding existing user to group Docker
-          user:
-            name: '{{ ansible_user_id }}'
-            groups: docker
-            append: yes
+            - name: Installing K8s
+              apt:
+                name:
+                  - kubelet
+                  - kubeadm
+                  - kubectl
+                state: present
 
-        - name: Ensuring Docker is started
-          service:
-            name: docker
-            state: started
-            enabled: yes
+            - name: Setting up swap
+              block:
+                - name: Disabling swap
+                  shell: swapoff -a
+                - name: Setting fstab config file
+                  shell: sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
-    - name: Setting Connection and Network
-      become: true
-      block:
-        - name: Create SSH directory if it does not exist
-          file:
-            path: /root/.ssh
-            state: directory
-
-        - name: Copying Private Key
-          copy:
-            src: '{{ ssh_keys_path }}/vagrant-key'
-            dest: /root/.ssh/id_rsa
-            mode: 400
-
-        - name: Copying Public Key
-          copy:
-            src: '{{ ssh_keys_path }}/vagrant-key.pub'
-            dest: '{{ item.dest }}'
-            mode: 400
-          loop:
-            - { dest: '/root/.ssh/id_rsa.pub' }
-            - { dest: '/root/.ssh/authorized_keys' }
-
-        - name: Copying SSH Key to /home dir
-          shell: cat /root/.ssh/id_rsa.pub >> /home/{{ ansible_user_id }}/.ssh/authorized_keys
-
-        - name: Setting Hostnames
-          shell:
-            cmd: 'echo {{ item.host }} >> /etc/hosts'
-          loop:
-            - { host: "'10.0.10.100 manager.lab'" }
-            - { host: "'10.0.10.110 worker01.lab'" }
-            - { host: "'10.0.10.120 worker02.lab'" }
-            - { host: "'10.0.10.130 registry.lab'" }
+    # - name: Setting Connection and Network
+    #   become: true
+    #   block:
+    #     - name: Create SSH directory if it does not exist
+    #       file:
+    #         path: /root/.ssh
+    #         state: directory
+    #
+    #     - name: Copying Private Key
+    #       copy:
+    #         src: '{{ ssh_keys_path }}/vagrant-key'
+    #         dest: /root/.ssh/id_rsa
+    #         mode: 400
+    #
+    #     - name: Copying Public Key
+    #       copy:
+    #         src: '{{ ssh_keys_path }}/vagrant-key.pub'
+    #         dest: '{{ item.dest }}'
+    #         mode: 400
+    #       loop:
+    #         - { dest: '/root/.ssh/id_rsa.pub' }
+    #         - { dest: '/root/.ssh/authorized_keys' }
+    #
+    #     - name: Copying SSH Key to /home dir
+    #       shell: cat /root/.ssh/id_rsa.pub >> /home/{{ ansible_user_id }}/.ssh/authorized_keys
+    #
+    #     - name: Setting Hostnames
+    #       shell:
+    #         cmd: 'echo {{ item.host }} >> /etc/hosts'
+    #       loop:
+    #         - { host: "'10.0.10.100 manager.lab'" }
+    #         - { host: "'10.0.10.110 worker01.lab'" }
+    #         - { host: "'10.0.10.120 worker02.lab'" }
