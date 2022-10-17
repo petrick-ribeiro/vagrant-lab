@@ -6,7 +6,6 @@ machines = {
   'worker01' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '110', 'image' => 'bento/ubuntu-18.04' },
   'worker02' => { 'memory' => '2048', 'cpu' => '2', 'ip' => '120', 'image' => 'bento/ubuntu-18.04' },
   # 'registry' => { 'memory' => '514', 'cpu' => '2', 'ip' => '130', 'image' => 'bento/ubuntu-18.04' },
-}
 
 Vagrant.configure('2') do |config|
   machines.each do |name, conf|

@@ -1,4 +1,4 @@
-# :hammer_and_wrench: Vagrant Lab - Kubernetes
+# :hammer_and_wrench: Vagrant Lab
 
 ## A multi-machine environment for study ✏️.
 
