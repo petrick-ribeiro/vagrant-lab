@@ -1,0 +1,7 @@
+[master]
+10.0.10.100 ansible_connection=ssh ansible_user='vagrant' ansible_ssh_private_key_file='../keys/vagrant-key'
+
+[workers]
+10.0.10.110 ansible_connection=ssh ansible_user='vagrant' ansible_ssh_private_key_file='../keys/vagrant-key'
+10.0.10.120 ansible_connection=ssh ansible_user='vagrant' ansible_ssh_private_key_file='../keys/vagrant-key'
+

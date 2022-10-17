@@ -1,0 +1,21 @@
+---
+- name: Provisioning All Nodes
+  become: true
+  gather_facts: true
+  hosts: all
+  roles:
+    - common
+
+- name: Provisioning Kubernetes Control Plane
+  become: true
+  gather_facts: true
+  hosts: master
+  roles:
+    - control-plane
+
+- name: Provisioning Kubernetes Worker Nodes
+  become: true
+  gather_facts: true
+  hosts: workers
+  roles:
+    - workers

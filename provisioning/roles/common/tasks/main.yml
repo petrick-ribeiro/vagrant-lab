@@ -1,0 +1,147 @@
+---
+- name: Provisioning all Nodes
+  block:
+    - name: Adding IP address
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item }}$'
+        line: "{{ hostvars[item].ansible_host }} {{item}}"
+        state: present
+      when: hostvars[item].ansible_host is defined
+      loop: "{{ groups.all }}"
+
+    - name: Configuring Kernel Modules
+      block:
+        - name: Setting up modules k8s.conf
+          blockinfile:
+            create: true
+            path: /etc/modules-load.d/k8s.conf
+            block: |
+              br_netfilter
+
+        - name: Applying configuration
+          command: "{{ item }}"
+          loop:
+            - modprobe overlay
+            - modprobe br_netfilter
+
+        - name: Setting up kernel k8s.conf
+          blockinfile:
+            create: true
+            path: /etc/sysctl.d/k8s.conf
+            block: |
+              net.bridge.bridge-nf-call-iptables = 1
+              net.bridge.bridge-nf-call-ip6tables = 1
+              net.ipv4.ip_forward = 1
+
+        - name: Applying configuration
+          command: sysctl --system
+
+    - name: Upgrading all packages
+      apt:
+        name: "*"
+        state: latest
+
+    - name: Installing Common Pkgs
+      apt:
+        name: '{{ ubuntu_pkgs }}'
+        state: latest
+        update_cache: yes
+
+    - name: Installing Containerd
+      block:
+        - name: Adding public signing key - containerd
+          apt_key:
+            url: "{{ containerd_key }}"
+            state: present
+
+        - name: Adding Repository - containerd
+          apt_repository:
+            repo: "{{ containerd_repo }}"
+            state: present
+
+        - name: Installing containerd
+          apt:
+            name: containerd.io
+            update_cache: true
+            install_recommends: true
+
+        - name: Creating containerd directory if it does not exist
+          file:
+            path: "{{ item.path }}"
+            state: "{{ item.state }}"
+          loop:
+            - { path: /etc/containerd/, state: directory}
+            - { path: /etc/containerd/config.toml, state: touch}
+
+        - name: Getting containerd default config
+          command: containerd config default 
+          register: containerd_config
+
+        - name: Adding containerd default config
+          copy:
+            content: "{{ containerd_config.stdout }}"
+            dest: /etc/containerd/config.toml
+
+        - name: Ensuring containerd is started
+          systemd:
+            name: containerd
+            state: started
+            enabled: true
+
+    - name: Setting Up common K8s config
+      block:
+        - name: Adding public signing key - K8s
+          apt_key:
+            url: "{{ k8s_key }}"
+            state: present
+
+        - name: Adding Repository - K8s
+          apt_repository:
+            repo: "{{ k8s_repo }}"
+            state: present
+            filename: kubernetes.list
+
+        - name: Installing K8s
+          apt:
+            name:
+              - kubelet
+              - kubeadm
+              - kubectl
+            state: present
+            update_cache: true
+            install_recommends: true
+
+        - name: Setting up swap
+          block:
+            - name: Removing swapfile from /etc/fstab
+              mount:
+                name: "{{ item }}"
+                fstype: swap
+                state: absent
+              loop:
+                - swap
+                - none
+
+            - name: Disabling swap
+              command: swapoff -a
+              when: ansible_swaptotal_mb > 0
+
+        - name: Configuring node ip
+          lineinfile:
+            path: /etc/default/kubelet
+            line: KUBELET_EXTRA_ARGS=--node-ip="{{ ansible_eth1.ipv4.address }}"
+            create: true
+
+        - name: Restarting kubelet
+          service:
+            name: kubelet
+            daemon_reload: yes
+            state: restarted
+
+    - name: Rebooting {{ ansible_hostname }} and wait for it to restart
+      reboot:
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
