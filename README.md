@@ -5,6 +5,7 @@
 ## Prereqs:
 - [VM VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 - [Vagrant](https://www.vagrantup.com/downloads)
+- [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## Getting started:
 ### Clone the repo to /home:
@@ -24,6 +25,11 @@ ssh-keygen -q -t rsa -f ./keys/vagrant-key -N ''
 ``` shell
 vagrant up
 ```
+### Deploy Kubernetes Cluster
+``` shell
+cd /provisioning &&\
+ansible-playbook site.yml -i hosts
+```
 ### Destroy the environment 💣
 ``` shell
 vagrant destroy
@@ -37,6 +43,6 @@ vagrant up <machine name>
 vagrant destroy -f <machine name>
 ``` 
 > Environment:
-> - **manager** (Primary Node - Ubuntu)
-> - **worker01** (Secondary Node - Ubuntu)
-> - **worker02** (Secondary Node - CentOS/7)
+> - **master** (Primary Node - Control Plane)
+> - **worker01** (Worker Node)
+> - **worker02** (Worker Node)
