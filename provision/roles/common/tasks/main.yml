@@ -139,7 +139,7 @@
             daemon_reload: yes
             state: restarted
 
-    - name: Rebooting {{ ansible_hostname }} and wait for it to restart
+    - name: Rebooting Nodes and wait for it to restart
       reboot:
         connect_timeout: 5
         reboot_timeout: 600

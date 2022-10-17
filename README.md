@@ -27,7 +27,7 @@ vagrant up
 ```
 ### Deploy Kubernetes Cluster
 ``` shell
-cd /provisioning &&\
+cd ./provision &&\
 ansible-playbook site.yml -i hosts
 ```
 ### Destroy the environment 💣
