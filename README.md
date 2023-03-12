@@ -17,6 +17,9 @@ git clone https://github.com/petrick-ribeiro/vagrant-lab.git
 ``` shell
 make all
 ```
+> Settings:
+> - Kubernetes Cluster
+> - SSH key pair that connects to all nodes.
 ### Destroy the environment 💣
 ``` shell
 make destroy
