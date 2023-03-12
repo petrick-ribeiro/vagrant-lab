@@ -8,35 +8,22 @@
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 
 ## Getting started:
-### Clone the repo to /home:
+### Clone the repo:
 ``` shell
-git clone https://github.com/petrick-ribeiro/vagrant-lab.git ~/vagrant-lab
+git clone https://github.com/petrick-ribeiro/vagrant-lab.git
 ```
-
-### Generate the keys:
-``` shell
-cd ~/vagrant-lab &&\
-mkdir keys &&\
-ssh-keygen -q -t rsa -f ./keys/vagrant-key -N ''
-```
-> To use the same pair key to acess the nodes.
 
 ### Bring up the environment :rocket:
 ``` shell
-vagrant up
-```
-### Deploy Kubernetes Cluster
-``` shell
-cd ./provision &&\
-ansible-playbook site.yml -i hosts
+make all
 ```
 ### Destroy the environment 💣
 ``` shell
-vagrant destroy
+make destroy
 ```
 ---
 
-### Boot / Destroy an specific machine:
+### Start / Destroy an specific machine without provision:
 ``` shell
 vagrant up <machine name>
 
